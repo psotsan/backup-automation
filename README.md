@@ -1,4 +1,4 @@
- # Robust Backup Automation
+ # Backup Automation
                                             
  A modular Bash automation suite for reliable backups, validation, and logging. Active Development.
 
