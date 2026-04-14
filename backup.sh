@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. ./lib/logging.sh
+
 set -euo pipefail
 
 
@@ -20,7 +22,7 @@ process_args() {
         done
     else
         # Use ERROR when logging module is omplemented
-        echo "[-] Incorrect number of options" >&2
+        echo "[-] Usage: $0 -c <config_file>" >&2
         exit 1
     fi
 }
@@ -46,6 +48,8 @@ read_config() {
 }
 
 
+log_debug "START" "Testing logging module"
+
 process_args $@
 echo "[+] CONFIG_FILE = $CONFIG_FILE"
 
@@ -54,4 +58,5 @@ if [[ -z "$CONFIG_FILE" ]]; then
 fi
 
 echo "[+] CONFIG_FILE = $CONFIG_FILE"
+
 read_config "$CONFIG_FILE"
