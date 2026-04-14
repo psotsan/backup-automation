@@ -6,8 +6,8 @@
                                                
  | Phase | Status |
  | :--- | :--- |                                                   
- | 1. Config & Init | WIP |
- | 2. Logging Module | Pending |
+ | 1. Config & Init | Done |
+ | 2. Logging Module | WIP |
  | 3. Validations| Pending |                                      
  | 4. Core Logic | Pending |
  | 5. Docs & Tests | Pending |
