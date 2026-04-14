@@ -8,7 +8,7 @@
  | :--- | :--- |                                                   
  | 1. Config & Init | WIP |
  | 2. Logging Module | Pending |
- | 3. Logging | Pending |                                      
+ | 3. Validations| Pending |                                      
  | 4. Core Logic | Pending |
  | 5. Docs & Tests | Pending |
                                           
