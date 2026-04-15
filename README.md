@@ -20,3 +20,4 @@ WIP
 - Language: Bash 5.2
 - Dependencies: coreutils
 - Editor: Vim
+- Shell verification: ShellCheck

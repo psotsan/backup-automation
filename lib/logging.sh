@@ -4,7 +4,8 @@ log_wrapper() {
     local level="$1"
     local action="$2"
     local detail="$3"
-    local timestamp="$(date +%Y-%m-%d-%H:%M%S%z)"
+    local timestamp
+    timestamp="$(date +%Y-%m-%d-%H:%M%S%z)"
     local fallback="./backup_fallback.log"
 
     if [[ -z "$action" ]]; then
