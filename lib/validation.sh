@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # shellcheck source=logging.sh
-. ./logging.sh
+. ./lib/logging.sh
 
 
 validate_root() {
@@ -15,37 +15,23 @@ validate_root() {
 }
 
 
-validate_conf_file() {
-    local action="VALIDATE_CONFIG_FILE"
-    local conf_file="$1"
-
-    if [[ ! -r conf_file ]]; then
-        log_info "$action" "File $conf_file IS NOT readable"
-        return 1
-    fi
-    
-    log_error "$action" "File $conf_file IS readable"
-    . "$conf_file"
-}
-
-
 validate_src_dir() {
     local dir="$1"
     local action="VALIDATE_SOURCE_DIR"
     
     if [[ ! -d "$dir" ]]; then
-        log_info "$action" "Source directory $dir DOES NOT exist"
+        log_error "$action" "Source directory $dir DOES NOT exist"
         return 1
     fi
 
-    log_error "$action" "Source directory $dir exists"
+    log_info "$action" "Source directory $dir exists"
 
     if [[ ! -r "$dir" ]]; then
-        log_info "$action" "Source directory $dir IS NOT readable"
+        log_error "$action" "Source directory $dir IS NOT readable"
         return 1
     fi
 
-    log_error "$action" "Source directory $dir IS readable"
+    log_info "$action" "Source directory $dir IS readable"
 }
 
 
@@ -54,18 +40,18 @@ validate_dst_dir() {
     local action="VALIDATE_DESTINATION_DIR"
     
     if [[ ! -d "$dir" ]]; then
-        log_info "$action" "Destination directory $dir DOES NOT exists"
+        log_error "$action" "Destination directory $dir DOES NOT exists"
         return 1
     fi
 
-    log_error "$action" "Destinantion directory $dir exists"
+    log_info "$action" "Destinantion directory $dir exists"
 
     if [[ ! -w "$dir" ]]; then
-        log_info "$action" "Destination directory $dir IS NOT writable"
+        log_error "$action" "Destination directory $dir IS NOT writable"
         return 1
     fi
     
-    log_error "$action" "Destination directory $dir IS writable"
+    log_info "$action" "Destination directory $dir IS writable"
 }
 
 
@@ -73,13 +59,14 @@ validate_dst_free() {
     local dir=$1
     local threshold=$2
     local action="VALIDATE_FREE_SPACE_ON_DESTINATION"
+    local used
     local free
-    free=$(df "$dir" | tail -n 1 | awk '{print $5}' | cut -d % -f 1)
-
+    used=$(df "$dir" | tail -n 1 | awk '{print $5}' | cut -d % -f 1)
+    free=$((100 - used))
 
     if [[ $free -lt $threshold ]]; then
         log_error "$action" "Not enough free space in $dir"
-        exit 1
+        return 1
     fi
 
     log_info "$action" "Enough free space in $dir"

@@ -5,68 +5,36 @@
 
 set -euo pipefail
 
-
-process_args() {
-    local action="PROCESSING_ARGS"
-    echo "$#"
-    if [[ $# -gt 0 && $(($# % 2)) -eq 0 ]]; then
-        while [[ "$#" -gt 0 ]]; do
-            case "$1" in
-                -c) shift
-                    CONFIG_FILE="$1"
-                    shift
-                    ;;
-                *) echo "[-] Unknown option $1" >&2
-                    log_error "$action" "Unknow option $1"
-                   exit 1
-                   ;;
-            esac
-        done
-    else
-        echo "[-] Usage: $0 -c <config_file>" >&2
-        log_error "$action" "Script misuse"
-        exit 1
-    fi
-}
+CONFIG_FILE="config/config.conf"
 
 
 read_config() {
-    local action="READ_CONFIG"
-    while IFS='=' read -r key val; do
-        [[ "$key" =~ ^#.*$ ]] && continue
-        [[ -z "$key" ]] && continue
-
-        key=$(echo "$key" | xargs)
-        val=$(echo "$val" | xargs)
-
-        case "$key" in
-            USER) USER="$val";;
-            SECRET) SECRET="$val";;
-            SOURCE_DIR) SOURCE_DIR="$val";;
-            DEST_DIR) DEST_DIR="$val";;
-            DST_FREE_THR) DST_FREE_THR="$val";;
-            # Use WARNING when logging  module is implemented
-            *) echo "[-] Unknown variable $key ignored" >&2
-            log_warning "$action" "Unkown variable defined in CONFIG_FILE"
-            ;;
-        esac
-    done < "$CONFIG_FILE"
+    local conf_file="$1"
+    local action="CONFIG"
+    
+    if [[ ! -f "$conf_file" || ! -r "$conf_file" ]]; then
+       log_error "$action" "Config file not found or not readable: $conf_file"
+       exit 1
+    fi
+    
+    . "$conf_file"
+    log_info "$action" "Config loaded form $conf_file"
 }
 
 
 run_pre_checks() {
-    
+    # validate_root
+    validate_src_dir "$SOURCE_DIR" || exit 1
+    validate_dst_dir "$DEST_DIR" || exit 1
+    validate_dst_free "$DEST_DIR" "$DST_FREE_THR" || exit 1
+    log_info "PRE-CHECKS" "All validations passed"    
 }
 
-log_debug "START" "Testing logging module"
 
-process_args "$@"
-echo "[+] CONFIG_FILE = $CONFIG_FILE"
+main() {
+    read_config "$CONFIG_FILE"
+    run_pre_checks
+}
 
-if [[ -z "$CONFIG_FILE" ]]; then
-    CONFIG_FILE="config/config.conf"
-fi
 
-echo "[+] CONFIG_FILE = $CONFIG_FILE"
-
-read_config "$CONFIG_FILE"
+main

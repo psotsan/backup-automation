@@ -8,8 +8,8 @@
  | :--- | :--- |                                                   
  | 1. Config & Init | Done |
  | 2. Logging Module | Done |
- | 3. Validations| WIP |                                      
- | 4. Core Logic | Pending |
+ | 3. Validations| Done |                                      
+ | 4. Core Logic | WIP |
  | 5. Docs & Tests | Pending |
                                           
 ## Current Capabilities
